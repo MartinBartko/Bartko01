@@ -1,12 +1,25 @@
 <?php
 require_once "connect.php";
 
-// Function to print results
-function print_results($result) {
+// Function to print results in a table
+function print_results_table($result) {
     if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "<pre>" . print_r($row, true) . "</pre>";
+        echo "<table border='1'><tr>";
+        // Print table headers
+        $field_info = $result->fetch_fields();
+        foreach ($field_info as $field) {
+            echo "<th>{$field->name}</th>";
         }
+        echo "</tr>";
+        // Print table rows
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            foreach ($row as $cell) {
+                echo "<td>{$cell}</td>";
+            }
+            echo "</tr>";
+        }
+        echo "</table>";
     } else {
         echo "<p>No data found</p>";
     }
@@ -19,7 +32,7 @@ $sql = "SELECT orders.*, customers.CompanyName
         JOIN customers ON orders.CustomerID = customers.CustomerID 
         WHERE YEAR(OrderDate) = 1996";
 $result = $conn->query($sql);
-print_results($result);
+print_results_table($result);
 
 // požiadavka 02
 echo "<h1>požiadavka 02</h1>";
@@ -30,7 +43,7 @@ $sql = "SELECT e.City,
         JOIN customers c ON e.City = c.City 
         GROUP BY e.City";
 $result = $conn->query($sql);
-print_results($result);
+print_results_table($result);
 
 // požiadavka 03
 echo "<h1>požiadavka 03</h1>";
@@ -41,7 +54,7 @@ $sql = "SELECT c.City,
         LEFT JOIN employees e ON c.City = e.City 
         GROUP BY c.City";
 $result = $conn->query($sql);
-print_results($result);
+print_results_table($result);
 
 // požiadavka 04
 echo "<h1>požiadavka 04</h1>";
@@ -55,16 +68,16 @@ $sql = "SELECT City,
         ) AS combined 
         GROUP BY City";
 $result = $conn->query($sql);
-print_results($result);
+print_results_table($result);
 
 // požiadavka 05
 echo "<h1>požiadavka 05</h1>";
 $sql = "SELECT orders.OrderID, employees.FirstName, employees.LastName 
         FROM orders 
         JOIN employees ON orders.EmployeeID = employees.EmployeeID 
-        WHERE ShippedDate > '1996-12-31'";
+        WHERE ShippedDate > '1995-12-31'";
 $result = $conn->query($sql);
-print_results($result);
+print_results_table($result);
 
 // požiadavka 06
 echo "<h1>požiadavka 06</h1>";
@@ -73,17 +86,17 @@ $sql = "SELECT ProductID, SUM(Quantity) AS TotalQuantity
         GROUP BY ProductID 
         HAVING SUM(Quantity) < 200";
 $result = $conn->query($sql);
-print_results($result);
+print_results_table($result);
 
 // požiadavka 07
 echo "<h1>požiadavka 07</h1>";
 $sql = "SELECT CustomerID, COUNT(OrderID) AS OrderCount 
         FROM orders 
-        WHERE OrderDate > '1996-12-31' 
+        WHERE OrderDate > '1994-12-31' 
         GROUP BY CustomerID 
         HAVING COUNT(OrderID) > 15";
 $result = $conn->query($sql);
-print_results($result);
+print_results_table($result);
 
 $conn->close();
 ?>
