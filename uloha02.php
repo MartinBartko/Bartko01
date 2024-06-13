@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Uloha 02</title>
+</head>
+<body>
+
 <?php
 require_once "connect.php";
 
@@ -70,16 +78,26 @@ $sql = "SELECT City,
 $result = $conn->query($sql);
 print_results_table($result);
 
-// požiadavka 05
-echo "<h1>požiadavka 05</h1>";
-$sql = "SELECT orders.OrderID, employees.FirstName, employees.LastName 
-        FROM orders 
-        JOIN employees ON orders.EmployeeID = employees.EmployeeID 
-        WHERE ShippedDate > '1995-12-31'";
-$result = $conn->query($sql);
-print_results_table($result);
+?>
 
-// požiadavka 06
+<h1>požiadavka 05</h1>
+<form method="POST">
+    <label for="date">Zadajte dátum (YYYY-MM-DD):</label>
+    <input type="date" id="date" name="date">
+    <input type="submit" value="Odoslať">
+</form>
+
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["date"])) {
+    $date = $_POST["date"];
+    $sql = "SELECT orders.OrderID, employees.FirstName, employees.LastName 
+            FROM orders 
+            JOIN employees ON orders.EmployeeID = employees.EmployeeID 
+            WHERE ShippedDate > '$date'";
+    $result = $conn->query($sql);
+    print_results_table($result);
+}
+
 echo "<h1>požiadavka 06</h1>";
 $sql = "SELECT ProductID, SUM(Quantity) AS TotalQuantity 
         FROM `order details` 
@@ -88,7 +106,6 @@ $sql = "SELECT ProductID, SUM(Quantity) AS TotalQuantity
 $result = $conn->query($sql);
 print_results_table($result);
 
-// požiadavka 07
 echo "<h1>požiadavka 07</h1>";
 $sql = "SELECT CustomerID, COUNT(OrderID) AS OrderCount 
         FROM orders 
@@ -100,3 +117,6 @@ print_results_table($result);
 
 $conn->close();
 ?>
+
+</body>
+</html>
